@@ -16,6 +16,8 @@ class Main {
       height: this.viewport.height / this.lineCount,
     }
 
+    this.lines = {};
+
 
     this.app = new PIXI.Application({
       width: this.viewport.width,
@@ -34,6 +36,8 @@ class Main {
     this._setupBgVideo();
 
     this._setupLines();
+
+    this._setupAnimation();
 
     // this._setupFilter();
 
@@ -87,6 +91,7 @@ class Main {
     line.drawRect(0, positionY, this.viewport.width, height);
     line.endFill();
     line.name = name;
+    this.lines[name] = line;
 
     return line;
   }
@@ -94,6 +99,7 @@ class Main {
   _setupLines() {
     for(let i = 0; i < this.lineCount * 0.5; i++) {
       const line = this._createLine(`line${i}`, this.baseParams.height, this.baseParams.height * 2 * i);
+      line.scale.x = 0;
       this.maskChildrenContainer.addChild(line);
     }
 
@@ -111,6 +117,25 @@ class Main {
 
     displacementFilter.scale.x = 200;
     displacementFilter.scale.y = 200;
+  }
+
+  _setupAnimation() {
+    Object.keys(this.lines).forEach((key, index) => {
+      const lineBody = this.lines[key];
+      const tl = gsap.timeline({ repeat: -1, delay: index * 0.1 });
+      tl.to(lineBody, {
+        pixi: {
+          scaleX: 1,
+        },
+        duration: 1.5,
+        ease: 'power2.inOut',
+      })
+      .to(lineBody, {
+        x: this.viewport.width,
+        duration: 1.5,
+        ease: 'power2.inOut',
+      }, '+=2.0')
+    });
   }
 
   update(delta) {
