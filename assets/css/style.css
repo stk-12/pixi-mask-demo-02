@@ -1,0 +1,22 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  padding: 50px;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.frame {
+  width: calc(100vh - 100px);
+  height: calc(100vh - 100px);
+}
+
+canvas {
+  width: 100%;
+  height: calc(100vh - 100px);
+}
