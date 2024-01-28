@@ -34,13 +34,11 @@ class Main {
 
     this._setupContainer();
 
-    this._setupBgVideo();
-    this._setupBgVideo2();
+    this._initBgVideo();
 
-    this._setupLines();
-    this._setupLines2();
+    this._initLines();
 
-    this._setupAnimation();
+    this._initAnimation();
 
     // this._setupFilter();
 
@@ -72,32 +70,22 @@ class Main {
     this.maskContainer2.addChild(this.maskChildrenContainer2);
   }
 
-  _setupBgVideo() {
-    const videoTexture = PIXI.Texture.from('assets/images/video02.mp4');
-    const videoSprite = new PIXI.Sprite(videoTexture);
-
-    // ビデオのHTML要素にアクセスし、ミュートに設定します。
-    const videoElement = videoTexture.baseTexture.resource.source;
-    videoElement.muted = true; // ビデオをミュートに設定します。
-    videoElement.loop = true; // ビデオをループに設定します。
-
-    this._resizeVideoSprite(videoSprite);
-    // this.container.addChild(videoSprite);
-    this.maskContainer.addChild(videoSprite);
+  _initBgVideo() {
+    this._setupBgVideo('assets/images/video02.mp4', this.maskContainer);
+    this._setupBgVideo('assets/images/video01.mp4', this.maskContainer2);
   }
 
-  _setupBgVideo2() {
-    const videoTexture = PIXI.Texture.from('assets/images/video01.mp4');
+  _setupBgVideo(path, parentContainer) {
+    const videoTexture = PIXI.Texture.from(path);
     const videoSprite = new PIXI.Sprite(videoTexture);
 
-    // ビデオのHTML要素にアクセスし、ミュートに設定します。
+    // ビデオのHTML要素にアクセスし設定を変更
     const videoElement = videoTexture.baseTexture.resource.source;
-    videoElement.muted = true; // ビデオをミュートに設定します。
-    videoElement.loop = true; // ビデオをループに設定します。
+    videoElement.muted = true; // ミュート設定
+    videoElement.loop = true; // ループ設定
 
     this._resizeVideoSprite(videoSprite);
-    // this.container.addChild(videoSprite);
-    this.maskContainer2.addChild(videoSprite);
+    parentContainer.addChild(videoSprite);
   }
 
   _resizeVideoSprite(videoSprite) {
@@ -113,37 +101,27 @@ class Main {
   _createLine(name, height, positionY) {
     const line = new PIXI.Graphics();
     line.beginFill(0x000000);
-    // line.drawRect(0, 0, this.viewport.width, 50);
     line.drawRect(0, positionY, this.viewport.width, height);
     line.endFill();
     line.name = name;
-    // this.lines[name] = line;
 
     return line;
   }
 
-  _setupLines() {
-    for(let i = 0; i < this.lineCount * 0.5; i++) {
-      const line = this._createLine(`line${i}`, this.baseParams.height, this.baseParams.height * 2 * i);
-      line.scale.x = 0;
-      this.lines[`line${i}`] = line;
-      this.maskChildrenContainer.addChild(line);
-    }
-
-    // this.container.mask = this.maskContainer;
-    this.maskContainer.mask = this.maskChildrenContainer;
+  _initLines() {
+    this._setupLines(this.lines, this.maskContainer, this.maskChildrenContainer);
+    this._setupLines(this.lines2, this.maskContainer2, this.maskChildrenContainer2);
   }
 
-  _setupLines2() {
+  _setupLines(linesGroup, maskContainer, parentContainer) {
     for(let i = 0; i < this.lineCount * 0.5; i++) {
       const line = this._createLine(`line${i}`, this.baseParams.height, this.baseParams.height * 2 * i);
       line.scale.x = 0;
-      this.lines2[`line${i}`] = line;
-      this.maskChildrenContainer2.addChild(line);
+      linesGroup[`line${i}`] = line;
+      parentContainer.addChild(line);
     }
 
-    // this.container.mask = this.maskContainer;
-    this.maskContainer2.mask = this.maskChildrenContainer2;
+    maskContainer.mask = parentContainer;
   }
 
 
@@ -159,27 +137,15 @@ class Main {
     displacementFilter.scale.y = 30;
   }
 
-  _setupAnimation() {
-    Object.keys(this.lines).forEach((key, index) => {
-      const lineBody = this.lines[key];
-      const tl = gsap.timeline({ repeat: -1, delay: index * 0.1 });
-      tl.to(lineBody, {
-        pixi: {
-          scaleX: 1,
-        },
-        duration: 1.5,
-        ease: 'power2.inOut',
-      })
-      .to(lineBody, {
-        x: this.viewport.width,
-        duration: 1.5,
-        ease: 'power2.inOut',
-      }, '+=2.0')
-    });
+  _initAnimation() {
+    this._setupAnimation(this.lines, 0);
+    this._setupAnimation(this.lines2, 2.5);
+  }
 
-    Object.keys(this.lines2).forEach((key, index) => {
-      const lineBody = this.lines2[key];
-      const tl = gsap.timeline({ repeat: -1, delay: 2.5 + index * 0.1 });
+  _setupAnimation(linesGroup, delay) {
+    Object.keys(linesGroup).forEach((key, index) => {
+      const lineBody = linesGroup[key];
+      const tl = gsap.timeline({ repeat: -1, delay: delay + index * 0.1 });
       tl.to(lineBody, {
         pixi: {
           scaleX: 1,
