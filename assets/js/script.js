@@ -30,7 +30,9 @@ class Main {
     this.app.stage.eventMode = 'static';
 
 
-    // this.app.ticker.add((delta) => this.update(delta));
+    this.app.ticker.add((delta) => this.update(delta));
+
+    this.displacementFilter = null;
 
     this._setupContainer();
 
@@ -40,7 +42,7 @@ class Main {
 
     this._initAnimation();
 
-    // this._setupFilter();
+    this._setupFilter();
 
     this._addEvent();
   }
@@ -128,18 +130,37 @@ class Main {
   _setupFilter() {
     const displacementSprite = PIXI.Sprite.from('https://pixijs.com/assets/pixi-filters/displacement_map_repeat.jpg');
     displacementSprite.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
-    const displacementFilter = new PIXI.filters.DisplacementFilter(displacementSprite);
+    this.displacementFilter = new PIXI.filters.DisplacementFilter(displacementSprite);
 
-    this.container.filters = [displacementFilter];
+    this.container.filters = [this.displacementFilter];
     // this.maskContainer.filters = [displacementFilter];
 
-    displacementFilter.scale.x = 30;
-    displacementFilter.scale.y = 30;
+    // this.displacementFilter.scale.x = 0;
+    // this.displacementFilter.scale.y = 30;
+  }
+
+  _setupFilterAnimation() {
+    const tl = gsap.timeline({ repeat: -1 });
+    tl.to(this.displacementFilter, {
+      duration: 2,
+      pixi: {
+        scaleY: 30.0,
+      },
+      ease: 'power2.inOut',
+    })
+    .to(this.displacementFilter, {
+      duration: 2,
+      pixi: {
+        scaleY: 0,
+      },
+      ease: 'power2.inOut',
+    });
   }
 
   _initAnimation() {
     this._setupAnimation(this.lines, 0);
     this._setupAnimation(this.lines2, 2.5);
+    this._setupFilterAnimation();
   }
 
   _setupAnimation(linesGroup, delay) {
@@ -162,6 +183,8 @@ class Main {
   }
 
   update(delta) {
+    // this.displacementFilter.scale.y += 0.1;
+    // this.displacementFilter.scale.y = 30 * Math.cos(0.01 * delta);
 
   }
 

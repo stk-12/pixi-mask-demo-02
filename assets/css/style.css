@@ -1,9 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
 * {
   margin: 0;
   padding: 0;
 }
 
 body {
+  font-family: 'Bebas Neue', cursive;
   padding: 50px;
   background: #000;
   display: flex;
@@ -19,4 +22,20 @@ body {
 canvas {
   width: 100%;
   height: calc(100vh - 100px);
+}
+
+.contents {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  font-size: 7vw;
+  color: #fff;
 }
