@@ -11,7 +11,7 @@ class Main {
       height: this.DOM.canvas.clientHeight,
     }
 
-    this.lineCount = 40;
+    this.lineCount = 16;
     this.baseParams = {
       height: this.viewport.height / this.lineCount,
     }
